@@ -451,26 +451,26 @@
         tab.classList.add("active");
         mode = tab.dataset.tab;
         document.getElementById(`panel-${mode}`).classList.add("active");
-        localStorage.setItem("nimbus_mode", mode);
+        sessionStorage.setItem("nimbus_mode", mode);
       });
     });
 
-    // 새로고침해도 입력값이 남아있도록 localStorage에 저장/복원
+    // 새로고침하면 유지되지만, 탭/창을 닫으면 초기화되도록 sessionStorage에 저장/복원
     const PERSIST_FIELDS = ["name", "image", "repo"];
 
     PERSIST_FIELDS.forEach(id => {
       const el = document.getElementById(id);
       el.addEventListener("input", () => {
-        localStorage.setItem(`nimbus_${id}`, el.value);
+        sessionStorage.setItem(`nimbus_${id}`, el.value);
       });
     });
 
     function restoreFormState() {
       PERSIST_FIELDS.forEach(id => {
-        const saved = localStorage.getItem(`nimbus_${id}`);
+        const saved = sessionStorage.getItem(`nimbus_${id}`);
         if (saved) document.getElementById(id).value = saved;
       });
-      const savedMode = localStorage.getItem("nimbus_mode");
+      const savedMode = sessionStorage.getItem("nimbus_mode");
       if (savedMode === "repo") {
         document.querySelector('.tab[data-tab="repo"]').click();
       }
