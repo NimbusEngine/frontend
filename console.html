@@ -134,6 +134,21 @@
     box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.6);
   }
 
+  .account-card {
+    margin-bottom: 16px;
+  }
+
+  .account-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13.5px;
+  }
+
+  .account-status strong {
+    color: var(--accent);
+  }
+
   .tabs {
     display: flex;
     gap: 4px;
@@ -481,6 +496,31 @@
       <p>Docker 이미지나 GitHub 저장소만 있으면, 나머지(네임스페이스·빌드·라우팅)는 NimbusEngine이 처리합니다.</p>
     </div>
 
+    <div class="card account-card" id="loggedOutView">
+      <div class="body-pad">
+        <div class="field">
+          <label>아이디</label>
+          <input id="authUsername" placeholder="username">
+        </div>
+        <div class="field">
+          <label>비밀번호</label>
+          <input id="authPassword" type="password" placeholder="password">
+        </div>
+        <div class="actions">
+          <button class="btn-primary" onclick="login()">로그인</button>
+          <button class="btn-secondary" onclick="register()">회원가입</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card account-card" id="loggedInView" style="display:none;">
+      <div class="body-pad account-status">
+        <span><span class="dot ok"></span> <strong id="loggedInUsername"></strong>로 로그인됨</span>
+        <button class="btn-secondary" onclick="logout()">로그아웃</button>
+      </div>
+    </div>
+
+    <div id="appView" style="display:none;">
     <div class="card">
       <div class="tabs">
         <div class="tab active" data-tab="image">Docker 이미지</div>
@@ -488,11 +528,6 @@
       </div>
 
       <div class="body-pad">
-        <div class="field">
-          <label>API 키</label>
-          <input id="apiKey" type="password" placeholder="배포/삭제에 필요한 API 키">
-        </div>
-
         <div class="field">
           <label>프로젝트 이름</label>
           <input id="name" placeholder="my-app">
@@ -546,6 +581,7 @@
       </div>
       <div id="historyList"></div>
     </div>
+    </div>
 
     <footer>NimbusEngine &middot; kubeadm + Kaniko 기반 온프렘 배포 플랫폼</footer>
   </main>
@@ -566,7 +602,7 @@
     });
 
     // 새로고침하면 유지되지만, 탭/창을 닫으면 초기화되도록 sessionStorage에 저장/복원
-    const PERSIST_FIELDS = ["apiKey", "name", "image", "repo"];
+    const PERSIST_FIELDS = ["name", "image", "repo"];
 
     PERSIST_FIELDS.forEach(id => {
       const el = document.getElementById(id);
@@ -587,6 +623,60 @@
     }
 
     restoreFormState();
+
+    // ---------- 로그인/회원가입 ----------
+
+    function authHeaders() {
+      const key = sessionStorage.getItem("nimbus_apiKey");
+      return key ? { "X-API-Key": key } : {};
+    }
+
+    function updateAuthUI() {
+      const username = sessionStorage.getItem("nimbus_username");
+      if (username) {
+        document.getElementById("loggedOutView").style.display = "none";
+        document.getElementById("loggedInView").style.display = "block";
+        document.getElementById("appView").style.display = "block";
+        document.getElementById("loggedInUsername").textContent = username;
+      } else {
+        document.getElementById("loggedOutView").style.display = "block";
+        document.getElementById("loggedInView").style.display = "none";
+        document.getElementById("appView").style.display = "none";
+      }
+    }
+
+    async function authRequest(path) {
+      const username = document.getElementById("authUsername").value;
+      const password = document.getElementById("authPassword").value;
+      const res = await fetch(`${API_BASE}${path}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
+        method: "POST"
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.detail || "요청 실패");
+        return;
+      }
+      sessionStorage.setItem("nimbus_apiKey", data.api_key);
+      sessionStorage.setItem("nimbus_username", data.username);
+      document.getElementById("authPassword").value = "";
+      updateAuthUI();
+    }
+
+    function login() {
+      authRequest("/auth/login");
+    }
+
+    function register() {
+      authRequest("/auth/register");
+    }
+
+    function logout() {
+      sessionStorage.removeItem("nimbus_apiKey");
+      sessionStorage.removeItem("nimbus_username");
+      updateAuthUI();
+    }
+
+    updateAuthUI();
 
     function setStatus(state, label) {
       const dot = document.getElementById("statusDot");
@@ -656,11 +746,6 @@
         loadHistory();
         return;
       }
-    }
-
-    function authHeaders() {
-      const key = document.getElementById("apiKey").value;
-      return key ? { "X-API-Key": key } : {};
     }
 
     async function deployApp() {
