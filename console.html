@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NimbusEngine</title>
+<style>
+  :root {
+    --bg: #0b0f19;
+    --bg-glow: radial-gradient(circle at 20% -10%, rgba(94, 149, 255, 0.18), transparent 45%),
+               radial-gradient(circle at 90% 10%, rgba(140, 110, 255, 0.14), transparent 40%);
+    --surface: #121826;
+    --card: #161d2e;
+    --border: #262f45;
+    --border-hover: #3a4666;
+    --text: #eef1f8;
+    --text-muted: #8b93a7;
+    --text-faint: #4d5670;
+    --accent: #5e95ff;
+    --accent-soft: rgba(94, 149, 255, 0.12);
+    --success: #4ade80;
+    --error: #f87171;
+    --warn: #fbbf24;
+    --radius: 14px;
+    --font: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    background-image: var(--bg-glow);
+    color: var(--text);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 40px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .logo-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #5e95ff, #8c6eff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(94, 149, 255, 0.45);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 24px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .nav-links span {
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 56px 24px 100px;
+  }
+
+  .hero {
+    margin-bottom: 36px;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid rgba(94, 149, 255, 0.3);
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+
+  .eyebrow .pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .hero h1 {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 10px;
+    line-height: 1.3;
+  }
+
+  .hero p {
+    color: var(--text-muted);
+    font-size: 14.5px;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px;
+    box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.6);
+  }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 6px;
+    margin-bottom: 4px;
+  }
+
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px 12px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-radius: 9px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .tab.active {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: inset 0 0 0 1px var(--border-hover);
+  }
+
+  .body-pad {
+    padding: 18px 22px 22px;
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 7px;
+  }
+
+  .field input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 14px;
+    padding: 11px 13px;
+    border-radius: 9px;
+    outline: none;
+    font-family: var(--mono);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  .field input::placeholder {
+    color: var(--text-faint);
+  }
+
+  .panel {
+    display: none;
+  }
+
+  .panel.active {
+    display: block;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  button {
+    font-family: var(--font);
+    font-size: 13.5px;
+    font-weight: 600;
+    border-radius: 9px;
+    padding: 11px 16px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: opacity 0.15s, background 0.15s, transform 0.1s;
+  }
+
+  button:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #5e95ff, #7c6eff);
+    color: #fff;
+    flex: 1;
+    box-shadow: 0 8px 20px -6px rgba(94, 149, 255, 0.55);
+  }
+
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+
+  .btn-secondary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .btn-secondary:hover { border-color: var(--border-hover); }
+
+  .result {
+    margin-top: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: none;
+    background: var(--card);
+  }
+
+  .result.show { display: block; }
+
+  .result-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--text-faint);
+  }
+
+  .dot.ok { background: var(--success); box-shadow: 0 0 8px var(--success); }
+  .dot.err { background: var(--error); box-shadow: 0 0 8px var(--error); }
+  .dot.pending { background: var(--warn); animation: pulse 1s infinite; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  pre {
+    margin: 0;
+    padding: 16px 18px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #a5d8ff;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  footer {
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 12px;
+    margin-top: 36px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M6 18C3.79 18 2 16.21 2 14C2 12.09 3.36 10.5 5.17 10.09C5.06 9.65 5 9.19 5 8.71C5 5.55 7.55 3 10.71 3C13.29 3 15.47 4.71 16.19 7.07C16.46 7.02 16.73 7 17 7C19.76 7 22 9.24 22 12C22 14.76 19.76 17 17 17H6V18Z" fill="white"/>
+        </svg>
+      </div>
+      NimbusEngine
+    </div>
+  </div>
+
+  <main>
+    <div class="hero">
+      <div class="eyebrow"><span class="pulse"></span>클러스터 연결됨</div>
+      <h1>구름처럼 가볍게,<br>학교 서버에 배포하세요.</h1>
+      <p>Docker 이미지나 GitHub 저장소만 있으면, 나머지(네임스페이스·빌드·라우팅)는 NimbusEngine이 처리합니다.</p>
+    </div>
+
+    <div class="card">
+      <div class="tabs">
+        <div class="tab active" data-tab="image">Docker 이미지</div>
+        <div class="tab" data-tab="repo">GitHub 저장소</div>
+      </div>
+
+      <div class="body-pad">
+        <div class="field">
+          <label>프로젝트 이름</label>
+          <input id="name" placeholder="my-app">
+        </div>
+
+        <div class="panel active" id="panel-image">
+          <div class="field">
+            <label>Docker 이미지</label>
+            <input id="image" placeholder="nginx:latest">
+          </div>
+        </div>
+
+        <div class="panel" id="panel-repo">
+          <div class="field">
+            <label>GitHub 저장소 URL</label>
+            <input id="repo" placeholder="https://github.com/user/repo">
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-primary" id="deployBtn" onclick="deployApp()">Deploy</button>
+          <button class="btn-secondary" onclick="checkStatus()">상태 확인</button>
+          <button class="btn-secondary" onclick="deleteApp()">삭제</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="result" id="resultBox">
+      <div class="result-head">
+        <span class="dot" id="statusDot"></span>
+        <span id="statusText">Response</span>
+      </div>
+      <pre id="result"></pre>
+    </div>
+
+    <footer>NimbusEngine &middot; kubeadm + Kaniko 기반 온프렘 배포 플랫폼</footer>
+  </main>
+
+  <script>
+    const API_BASE = "/api";
+    let mode = "image";
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+        tab.classList.add("active");
+        mode = tab.dataset.tab;
+        document.getElementById(`panel-${mode}`).classList.add("active");
+      });
+    });
+
+    function setStatus(state, label) {
+      const dot = document.getElementById("statusDot");
+      const text = document.getElementById("statusText");
+      dot.className = "dot " + state;
+      text.textContent = label;
+    }
+
+    function showResult(data) {
+      document.getElementById("resultBox").classList.add("show");
+      document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function withLoading(fn) {
+      const btn = document.getElementById("deployBtn");
+      btn.disabled = true;
+      setStatus("pending", "요청 처리 중...");
+      try {
+        await fn();
+      } catch (e) {
+        setStatus("err", "요청 실패");
+        showResult({ error: String(e) });
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function deployApp() {
+      const name = document.getElementById("name").value;
+      withLoading(async () => {
+        let res;
+        if (mode === "image") {
+          const image = document.getElementById("image").value;
+          res = await fetch(`${API_BASE}/deployments?name=${encodeURIComponent(name)}&image=${encodeURIComponent(image)}`, { method: "POST" });
+        } else {
+          const repo = document.getElementById("repo").value;
+          res = await fetch(`${API_BASE}/deploy-from-repo?name=${encodeURIComponent(name)}&repo_url=${encodeURIComponent(repo)}`, { method: "POST" });
+        }
+        const data = await res.json();
+        setStatus(res.ok ? "ok" : "err", res.ok ? "배포 완료" : "배포 실패");
+        showResult(data);
+      });
+    }
+
+    async function checkStatus() {
+      const name = document.getElementById("name").value;
+      withLoading(async () => {
+        const res = await fetch(`${API_BASE}/deployments/${encodeURIComponent(name)}`);
+        const data = await res.json();
+        setStatus(res.ok ? "ok" : "err", "상태 조회됨");
+        showResult(data);
+      });
+    }
+
+    async function deleteApp() {
+      const name = document.getElementById("name").value;
+      withLoading(async () => {
+        const res = await fetch(`${API_BASE}/deployments/${encodeURIComponent(name)}`, { method: "DELETE" });
+        const data = await res.json();
+        setStatus(res.ok ? "ok" : "err", "삭제됨");
+        showResult(data);
+      });
+    }
+  </script>
+</body>
+</html>
