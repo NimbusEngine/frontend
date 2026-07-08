@@ -356,6 +356,102 @@
 
   .live-link-open:hover { opacity: 0.85; }
 
+  .history-card {
+    margin-top: 40px;
+  }
+
+  .history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .history-header h2 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .history-refresh {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .history-refresh:hover { border-color: var(--border-hover); color: var(--text); }
+
+  .history-empty {
+    color: var(--text-faint);
+    font-size: 13px;
+    padding: 24px;
+    text-align: center;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+  }
+
+  .history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    background: var(--card);
+  }
+
+  .history-item-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .history-name {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .history-source {
+    font-size: 11px;
+    color: var(--text-faint);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2px 8px;
+    flex-shrink: 0;
+  }
+
+  .history-item-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .history-time {
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+
+  .history-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .history-badge.created { background: rgba(74, 222, 128, 0.15); color: var(--success); }
+  .history-badge.build_failed { background: rgba(248, 113, 113, 0.15); color: var(--error); }
+  .history-badge.deleted { background: rgba(139, 147, 167, 0.15); color: var(--text-muted); }
+
   footer {
     text-align: center;
     color: var(--text-faint);
@@ -435,6 +531,14 @@
         <span id="statusText">Response</span>
       </div>
       <pre id="result"></pre>
+    </div>
+
+    <div class="history-card">
+      <div class="history-header">
+        <h2>배포 기록</h2>
+        <button class="history-refresh" onclick="loadHistory()">새로고침</button>
+      </div>
+      <div id="historyList"></div>
     </div>
 
     <footer>NimbusEngine &middot; kubeadm + Kaniko 기반 온프렘 배포 플랫폼</footer>
@@ -543,6 +647,7 @@
         const ok = data.status === "created";
         setStatus(ok ? "ok" : "err", ok ? "배포 완료" : "배포 실패");
         showResult(data);
+        loadHistory();
         return;
       }
     }
@@ -556,6 +661,7 @@
           const data = await res.json();
           setStatus(res.ok ? "ok" : "err", res.ok ? "배포 완료" : "배포 실패");
           showResult(data);
+          loadHistory();
         } else {
           const repo = document.getElementById("repo").value;
           const res = await fetch(`${API_BASE}/deploy-from-repo?name=${encodeURIComponent(name)}&repo_url=${encodeURIComponent(repo)}`, { method: "POST" });
@@ -587,8 +693,50 @@
         const data = await res.json();
         setStatus(res.ok ? "ok" : "err", "삭제됨");
         showResult(data);
+        loadHistory();
       });
     }
+
+    const HISTORY_LABELS = {
+      created: "생성됨",
+      build_failed: "빌드 실패",
+      deleted: "삭제됨"
+    };
+
+    function formatTime(isoString) {
+      const d = new Date(isoString + "Z");
+      return d.toLocaleString("ko-KR", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+    }
+
+    async function loadHistory() {
+      const listEl = document.getElementById("historyList");
+      try {
+        const res = await fetch(`${API_BASE}/history`);
+        const items = await res.json();
+
+        if (!items.length) {
+          listEl.innerHTML = '<div class="history-empty">아직 배포 기록이 없습니다.</div>';
+          return;
+        }
+
+        listEl.innerHTML = items.map(item => `
+          <div class="history-item">
+            <div class="history-item-left">
+              <span class="history-name">${item.name}</span>
+              <span class="history-source">${item.source}</span>
+            </div>
+            <div class="history-item-right">
+              <span class="history-time">${formatTime(item.created_at)}</span>
+              <span class="history-badge ${item.status}">${HISTORY_LABELS[item.status] || item.status}</span>
+            </div>
+          </div>
+        `).join("");
+      } catch (e) {
+        listEl.innerHTML = '<div class="history-empty">기록을 불러오지 못했습니다.</div>';
+      }
+    }
+
+    loadHistory();
   </script>
 </body>
 </html>
