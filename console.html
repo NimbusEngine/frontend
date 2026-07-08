@@ -388,7 +388,13 @@
 
     function showResult(data) {
       document.getElementById("resultBox").classList.add("show");
-      document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+      if (data.logs) {
+        const { logs, ...rest } = data;
+        document.getElementById("result").textContent =
+          JSON.stringify(rest, null, 2) + "\n\n--- 빌드 로그 ---\n" + logs;
+      } else {
+        document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+      }
     }
 
     async function withLoading(fn) {
