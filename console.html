@@ -292,6 +292,70 @@
     word-break: break-all;
   }
 
+  .live-link {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 20px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, rgba(94, 149, 255, 0.14), rgba(140, 110, 255, 0.1));
+    border: 1px solid rgba(94, 149, 255, 0.35);
+    border-radius: var(--radius);
+  }
+
+  .live-link.show { display: flex; }
+
+  .live-link-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .live-link-info .dot.ok { flex-shrink: 0; }
+
+  .live-link-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .live-link-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .live-link a {
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 13px;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .live-link a:hover { text-decoration: underline; }
+
+  .live-link a.live-link-open {
+    flex-shrink: 0;
+    background: var(--accent);
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 7px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .live-link-open:hover { opacity: 0.85; }
+
   footer {
     text-align: center;
     color: var(--text-faint);
@@ -354,6 +418,17 @@
       </div>
     </div>
 
+    <div class="live-link" id="liveLink">
+      <div class="live-link-info">
+        <span class="dot ok"></span>
+        <div class="live-link-text">
+          <span class="live-link-label">배포된 주소</span>
+          <a id="liveLinkUrl" href="#" target="_blank" rel="noopener"></a>
+        </div>
+      </div>
+      <a class="live-link-open" id="liveLinkOpen" href="#" target="_blank" rel="noopener">열기 ↗</a>
+    </div>
+
     <div class="result" id="resultBox">
       <div class="result-head">
         <span class="dot" id="statusDot"></span>
@@ -386,8 +461,21 @@
       text.textContent = label;
     }
 
+    function showLiveLink(url) {
+      const box = document.getElementById("liveLink");
+      if (!url) {
+        box.classList.remove("show");
+        return;
+      }
+      document.getElementById("liveLinkUrl").textContent = url;
+      document.getElementById("liveLinkUrl").href = url;
+      document.getElementById("liveLinkOpen").href = url;
+      box.classList.add("show");
+    }
+
     function showResult(data) {
       document.getElementById("resultBox").classList.add("show");
+      showLiveLink(data.url);
       if (data.logs) {
         const { logs, ...rest } = data;
         document.getElementById("result").textContent =
