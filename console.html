@@ -499,20 +499,50 @@
       }
     }
 
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function pollBuildStatus(name) {
+      let seconds = 0;
+      while (true) {
+        setStatus("pending", `이미지 빌드 중... (${seconds}초 경과)`);
+        const res = await fetch(`${API_BASE}/deploy-from-repo/${encodeURIComponent(name)}/status`);
+        const data = await res.json();
+
+        if (data.status === "building") {
+          await sleep(2000);
+          seconds += 2;
+          continue;
+        }
+
+        const ok = data.status === "created";
+        setStatus(ok ? "ok" : "err", ok ? "배포 완료" : "배포 실패");
+        showResult(data);
+        return;
+      }
+    }
+
     async function deployApp() {
       const name = document.getElementById("name").value;
       withLoading(async () => {
-        let res;
         if (mode === "image") {
           const image = document.getElementById("image").value;
-          res = await fetch(`${API_BASE}/deployments?name=${encodeURIComponent(name)}&image=${encodeURIComponent(image)}`, { method: "POST" });
+          const res = await fetch(`${API_BASE}/deployments?name=${encodeURIComponent(name)}&image=${encodeURIComponent(image)}`, { method: "POST" });
+          const data = await res.json();
+          setStatus(res.ok ? "ok" : "err", res.ok ? "배포 완료" : "배포 실패");
+          showResult(data);
         } else {
           const repo = document.getElementById("repo").value;
-          res = await fetch(`${API_BASE}/deploy-from-repo?name=${encodeURIComponent(name)}&repo_url=${encodeURIComponent(repo)}`, { method: "POST" });
+          const res = await fetch(`${API_BASE}/deploy-from-repo?name=${encodeURIComponent(name)}&repo_url=${encodeURIComponent(repo)}`, { method: "POST" });
+          const data = await res.json();
+          if (!res.ok || data.status !== "building") {
+            setStatus("err", "요청 실패");
+            showResult(data);
+            return;
+          }
+          await pollBuildStatus(name);
         }
-        const data = await res.json();
-        setStatus(res.ok ? "ok" : "err", res.ok ? "배포 완료" : "배포 실패");
-        showResult(data);
       });
     }
 
