@@ -204,6 +204,23 @@
     transition: border-color 0.15s, box-shadow 0.15s;
   }
 
+  .field-hint {
+    margin: 8px 0 0;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-faint);
+  }
+
+  .field-hint code {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+  }
+
   .field input:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-soft);
@@ -544,6 +561,11 @@
           <div class="field">
             <label>GitHub 저장소 URL</label>
             <input id="repo" placeholder="https://github.com/user/repo">
+            <p class="field-hint">
+              Dockerfile이 없어도 자동으로 감지해서 빌드해요. 단, 저장소 루트에
+              <code>requirements.txt</code>(Python) 또는 <code>package.json</code>(Node.js) 또는
+              <code>index.html</code>(정적 사이트) 중 하나는 반드시 있어야 해요.
+            </p>
           </div>
         </div>
 
