@@ -643,7 +643,7 @@
           <div class="advanced-body">
             <div class="field">
               <label>프로젝트 <span style="font-weight:400;">(선택)</span></label>
-              <input id="project" placeholder="taskflow">
+              <input id="project" placeholder="my-project">
               <p class="field-hint">
                 같은 프로젝트로 여러 번 배포하면 한 네임스페이스에 모여서,
                 컴포넌트끼리 서비스 이름으로 서로를 호출할 수 있어요.
@@ -652,7 +652,7 @@
 
             <div class="field">
               <label>서비스 이름 <span style="font-weight:400;">(선택)</span></label>
-              <input id="serviceName" placeholder="taskflow-backend-svc">
+              <input id="serviceName" placeholder="api-svc">
               <p class="field-hint">
                 다른 컴포넌트가 이 컴포넌트를 부를 때 쓰는 이름이에요. 비우면 위의 이름을 그대로 써요.
               </p>
@@ -660,7 +660,7 @@
 
             <div class="field">
               <label>환경변수 <span style="font-weight:400;">(선택)</span></label>
-              <input id="env" placeholder="DB_HOST=db,DB_PORT=5432">
+              <input id="env" placeholder="KEY=VALUE,KEY2=VALUE2">
               <p class="field-hint">
                 <code>KEY=VALUE</code>를 쉼표로 구분해서 적어요. 값에 쉼표는 쓸 수 없어요.
               </p>
