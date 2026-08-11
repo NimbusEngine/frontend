@@ -238,6 +238,63 @@
     display: block;
   }
 
+  .advanced {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0;
+    margin-top: 4px;
+  }
+
+  .advanced > summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 11px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    user-select: none;
+  }
+
+  .advanced > summary::-webkit-details-marker { display: none; }
+
+  .advanced > summary::before {
+    content: "▸ ";
+    color: var(--text-faint);
+  }
+
+  .advanced[open] > summary::before { content: "▾ "; }
+
+  .advanced-body {
+    padding: 4px 14px 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .advanced-body .field:last-child { margin-bottom: 0; }
+
+  .check-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .check-row input {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  .check-row label {
+    margin: 0;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
   .actions {
     display: flex;
     gap: 8px;
@@ -546,14 +603,25 @@
 
       <div class="body-pad">
         <div class="field">
-          <label>프로젝트 이름</label>
+          <label>이름</label>
           <input id="name" placeholder="my-app">
+          <p class="field-hint">
+            배포될 컴포넌트 이름이에요. 프로젝트를 따로 지정하지 않으면 이 이름으로 프로젝트가 만들어져요.
+          </p>
         </div>
 
         <div class="panel active" id="panel-image">
           <div class="field">
             <label>Docker 이미지</label>
             <input id="image" placeholder="nginx:latest">
+          </div>
+          <div class="field">
+            <label>포트 <span style="font-weight:400;">(선택)</span></label>
+            <input id="port" placeholder="80">
+            <p class="field-hint">
+              컨테이너가 listen 하는 포트예요. 비우면 <code>80</code>을 사용해요.
+              예를 들어 <code>postgres:16</code>은 <code>5432</code>.
+            </p>
           </div>
         </div>
 
@@ -565,9 +633,45 @@
               Dockerfile이 없어도 자동으로 감지해서 빌드해요. 단, 저장소 루트에
               <code>requirements.txt</code>(Python) 또는 <code>package.json</code>(Node.js) 또는
               <code>index.html</code>(정적 사이트) 중 하나는 반드시 있어야 해요.
+              포트는 Dockerfile의 <code>EXPOSE</code>를 읽어 자동으로 정해요.
             </p>
           </div>
         </div>
+
+        <details class="advanced">
+          <summary>고급 설정 &mdash; 여러 컴포넌트로 이뤄진 앱 배포</summary>
+          <div class="advanced-body">
+            <div class="field">
+              <label>프로젝트 <span style="font-weight:400;">(선택)</span></label>
+              <input id="project" placeholder="taskflow">
+              <p class="field-hint">
+                같은 프로젝트로 여러 번 배포하면 한 네임스페이스에 모여서,
+                컴포넌트끼리 서비스 이름으로 서로를 호출할 수 있어요.
+              </p>
+            </div>
+
+            <div class="field">
+              <label>서비스 이름 <span style="font-weight:400;">(선택)</span></label>
+              <input id="serviceName" placeholder="taskflow-backend-svc">
+              <p class="field-hint">
+                다른 컴포넌트가 이 컴포넌트를 부를 때 쓰는 이름이에요. 비우면 위의 이름을 그대로 써요.
+              </p>
+            </div>
+
+            <div class="field">
+              <label>환경변수 <span style="font-weight:400;">(선택)</span></label>
+              <input id="env" placeholder="DB_HOST=db,DB_PORT=5432">
+              <p class="field-hint">
+                <code>KEY=VALUE</code>를 쉼표로 구분해서 적어요. 값에 쉼표는 쓸 수 없어요.
+              </p>
+            </div>
+
+            <div class="check-row">
+              <input type="checkbox" id="expose" checked>
+              <label for="expose">외부에 공개 (끄면 클러스터 안에서만 접근 가능)</label>
+            </div>
+          </div>
+        </details>
 
         <div class="actions">
           <button class="btn-primary" id="deployBtn" onclick="deployApp()">Deploy</button>
@@ -624,7 +728,7 @@
     });
 
     // 새로고침하면 유지되지만, 탭/창을 닫으면 초기화되도록 sessionStorage에 저장/복원
-    const PERSIST_FIELDS = ["name", "image", "repo"];
+    const PERSIST_FIELDS = ["name", "image", "repo", "port", "project", "serviceName", "env"];
 
     PERSIST_FIELDS.forEach(id => {
       const el = document.getElementById(id);
@@ -642,9 +746,32 @@
       if (savedMode === "repo") {
         document.querySelector('.tab[data-tab="repo"]').click();
       }
+      // 고급 설정에 값이 남아 있으면 접혀 있어도 보이도록 펼쳐둔다
+      const advancedUsed = ["project", "serviceName", "env"]
+        .some(id => document.getElementById(id).value.trim());
+      if (advancedUsed) document.querySelector(".advanced").open = true;
     }
 
     restoreFormState();
+
+    // ---------- 폼 값 읽기 ----------
+
+    function val(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    /** 프로젝트를 비워두면 컴포넌트 이름이 곧 프로젝트 이름이 된다. */
+    function currentProject() {
+      return val("project") || val("name");
+    }
+
+    /** 값이 있는 항목만 쿼리스트링으로 만든다. */
+    function buildQuery(params) {
+      return Object.entries(params)
+        .filter(([, v]) => v !== "" && v !== null && v !== undefined)
+        .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+        .join("&");
+    }
 
     // ---------- 로그인/회원가입 ----------
 
@@ -751,12 +878,13 @@
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async function pollBuildStatus(name) {
-      sessionStorage.setItem("nimbus_pendingBuild", name);
+    async function pollBuildStatus(name, project) {
+      sessionStorage.setItem("nimbus_pendingBuild", JSON.stringify({ name, project }));
       let seconds = 0;
       while (true) {
         setStatus("pending", `이미지 빌드 중... (${seconds}초 경과)`);
-        const res = await fetch(`${API_BASE}/deploy-from-repo/${encodeURIComponent(name)}/status`);
+        const query = buildQuery({ project });
+        const res = await fetch(`${API_BASE}/deploy-from-repo/${encodeURIComponent(name)}/status?${query}`);
         const data = await res.json();
 
         if (data.status === "building") {
@@ -776,19 +904,39 @@
 
     // 페이지가 새로고침되었을 때, 진행 중이던 빌드가 있으면 이어서 추적
     function resumePendingBuild() {
-      const pending = sessionStorage.getItem("nimbus_pendingBuild");
-      if (pending && sessionStorage.getItem("nimbus_username")) {
-        document.getElementById("name").value = pending;
-        withLoading(() => pollBuildStatus(pending));
+      const raw = sessionStorage.getItem("nimbus_pendingBuild");
+      if (!raw || !sessionStorage.getItem("nimbus_username")) return;
+
+      let pending;
+      try {
+        pending = JSON.parse(raw);
+      } catch {
+        pending = { name: raw, project: raw };   // 이전 형식(문자열)과의 호환
       }
+
+      document.getElementById("name").value = pending.name;
+      withLoading(() => pollBuildStatus(pending.name, pending.project || pending.name));
     }
 
     async function deployApp() {
-      const name = document.getElementById("name").value;
+      const name = val("name");
+      const project = currentProject();
+      const serviceName = val("serviceName");
+      const env = val("env");
+      const expose = document.getElementById("expose").checked;
+
       withLoading(async () => {
         if (mode === "image") {
-          const image = document.getElementById("image").value;
-          const res = await fetch(`${API_BASE}/deployments?name=${encodeURIComponent(name)}&image=${encodeURIComponent(image)}`, {
+          const query = buildQuery({
+            name,
+            image: val("image"),
+            port: val("port"),
+            project,
+            service_name: serviceName,
+            expose,
+            env,
+          });
+          const res = await fetch(`${API_BASE}/deployments?${query}`, {
             method: "POST",
             headers: authHeaders()
           });
@@ -797,8 +945,15 @@
           showResult(data);
           loadHistory();
         } else {
-          const repo = document.getElementById("repo").value;
-          const res = await fetch(`${API_BASE}/deploy-from-repo?name=${encodeURIComponent(name)}&repo_url=${encodeURIComponent(repo)}`, {
+          const query = buildQuery({
+            name,
+            repo_url: val("repo"),
+            project,
+            service_name: serviceName,
+            expose,
+            env,
+          });
+          const res = await fetch(`${API_BASE}/deploy-from-repo?${query}`, {
             method: "POST",
             headers: authHeaders()
           });
@@ -808,25 +963,28 @@
             showResult(data);
             return;
           }
-          await pollBuildStatus(name);
+          await pollBuildStatus(name, project);
         }
       });
     }
 
     async function checkStatus() {
-      const name = document.getElementById("name").value;
+      const project = currentProject();
       withLoading(async () => {
-        const res = await fetch(`${API_BASE}/deployments/${encodeURIComponent(name)}`);
+        const res = await fetch(`${API_BASE}/projects/${encodeURIComponent(project)}`);
         const data = await res.json();
-        setStatus(res.ok ? "ok" : "err", "상태 조회됨");
+        setStatus(res.ok && !data.error ? "ok" : "err", "상태 조회됨");
         showResult(data);
       });
     }
 
     async function deleteApp() {
-      const name = document.getElementById("name").value;
+      const project = currentProject();
+      if (!confirm(`프로젝트 "${project}" 를 통째로 삭제할까요? 안에 있는 모든 컴포넌트가 함께 사라져요.`)) {
+        return;
+      }
       withLoading(async () => {
-        const res = await fetch(`${API_BASE}/deployments/${encodeURIComponent(name)}`, {
+        const res = await fetch(`${API_BASE}/projects/${encodeURIComponent(project)}`, {
           method: "DELETE",
           headers: authHeaders()
         });
