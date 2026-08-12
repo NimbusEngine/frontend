@@ -149,32 +149,6 @@
     color: var(--accent);
   }
 
-  .tabs {
-    display: flex;
-    gap: 4px;
-    padding: 6px;
-    margin-bottom: 4px;
-  }
-
-  .tab {
-    flex: 1;
-    text-align: center;
-    padding: 10px 12px;
-    font-size: 13.5px;
-    font-weight: 600;
-    color: var(--text-muted);
-    border-radius: 9px;
-    cursor: pointer;
-    user-select: none;
-    transition: background 0.15s, color 0.15s;
-  }
-
-  .tab.active {
-    background: var(--surface);
-    color: var(--text);
-    box-shadow: inset 0 0 0 1px var(--border-hover);
-  }
-
   .body-pad {
     padding: 18px 22px 22px;
   }
@@ -230,47 +204,6 @@
     color: var(--text-faint);
   }
 
-  .panel {
-    display: none;
-  }
-
-  .panel.active {
-    display: block;
-  }
-
-  .advanced {
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0;
-    margin-top: 4px;
-  }
-
-  .advanced > summary {
-    cursor: pointer;
-    list-style: none;
-    padding: 11px 14px;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--text-muted);
-    user-select: none;
-  }
-
-  .advanced > summary::-webkit-details-marker { display: none; }
-
-  .advanced > summary::before {
-    content: "▸ ";
-    color: var(--text-faint);
-  }
-
-  .advanced[open] > summary::before { content: "▾ "; }
-
-  .advanced-body {
-    padding: 4px 14px 14px;
-    border-top: 1px solid var(--border);
-  }
-
-  .advanced-body .field:last-child { margin-bottom: 0; }
-
   .check-row {
     display: flex;
     align-items: center;
@@ -294,6 +227,159 @@
     font-weight: 500;
     color: var(--text);
   }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .section-head h2 {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .section-head .hint {
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  .project-url {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 10px 13px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--text-muted);
+    word-break: break-all;
+  }
+
+  .project-url b { color: var(--accent); font-weight: 600; }
+
+  .comp {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .comp.open { border-color: var(--border-hover); }
+
+  .comp-head {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 13px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .comp-caret {
+    color: var(--text-faint);
+    font-size: 10px;
+    width: 10px;
+    flex-shrink: 0;
+  }
+
+  .comp-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .comp-title.unnamed { color: var(--text-faint); font-style: italic; }
+
+  .badge {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .badge.public { border-color: rgba(74, 222, 128, 0.35); color: var(--success); }
+  .badge.pending { border-color: rgba(251, 191, 36, 0.4); color: var(--warn); animation: pulse 1s infinite; }
+  .badge.ok { border-color: rgba(74, 222, 128, 0.35); color: var(--success); }
+  .badge.err { border-color: rgba(248, 113, 113, 0.4); color: var(--error); }
+
+  .btn-icon {
+    background: transparent;
+    border: none;
+    color: var(--text-faint);
+    font-size: 15px;
+    line-height: 1;
+    padding: 4px 6px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .btn-icon:hover { color: var(--error); background: rgba(248, 113, 113, 0.1); }
+
+  .comp-body {
+    display: none;
+    padding: 14px 13px 4px;
+    border-top: 1px solid var(--border);
+  }
+
+  .comp.open .comp-body { display: block; }
+
+  .seg {
+    display: flex;
+    gap: 3px;
+    padding: 3px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+
+  .seg-opt {
+    flex: 1;
+    text-align: center;
+    padding: 7px 10px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .seg-opt.active { background: var(--card); color: var(--text); box-shadow: inset 0 0 0 1px var(--border-hover); }
+
+  .row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .row > .field { flex: 1; min-width: 0; }
+
+  .btn-add {
+    width: 100%;
+    background: transparent;
+    border: 1px dashed var(--border);
+    color: var(--text-muted);
+    padding: 12px;
+  }
+
+  .btn-add:hover { border-color: var(--accent); color: var(--accent); }
 
   .actions {
     display: flex;
@@ -595,88 +681,35 @@
     </div>
 
     <div id="appView" style="display:none;">
-    <div class="card">
-      <div class="tabs">
-        <div class="tab active" data-tab="image">Docker 이미지</div>
-        <div class="tab" data-tab="repo">GitHub 저장소</div>
-      </div>
-
+    <div class="card" style="margin-bottom:16px;">
       <div class="body-pad">
-        <div class="field">
-          <label>이름</label>
-          <input id="name" placeholder="my-app">
+        <div class="field" style="margin-bottom:0;">
+          <label>프로젝트</label>
+          <input id="project" placeholder="my-project">
           <p class="field-hint">
-            배포될 컴포넌트 이름이에요. 프로젝트를 따로 지정하지 않으면 이 이름으로 프로젝트가 만들어져요.
+            배포 단위예요. 프로젝트 하나가 네임스페이스 하나가 되고,
+            그 안의 컴포넌트끼리는 서비스 이름으로 서로를 호출할 수 있어요.
           </p>
         </div>
+        <div class="project-url">주소 <b id="projectUrl">&mdash;</b></div>
+      </div>
+    </div>
 
-        <div class="panel active" id="panel-image">
-          <div class="field">
-            <label>Docker 이미지</label>
-            <input id="image" placeholder="nginx:latest">
-          </div>
-          <div class="field">
-            <label>포트 <span style="font-weight:400;">(선택)</span></label>
-            <input id="port" placeholder="80">
-            <p class="field-hint">
-              컨테이너가 listen 하는 포트예요. 비우면 <code>80</code>을 사용해요.
-              예를 들어 <code>postgres:16</code>은 <code>5432</code>.
-            </p>
-          </div>
+    <div class="card">
+      <div class="body-pad">
+        <div class="section-head">
+          <h2>컴포넌트</h2>
+          <span class="hint">위에서부터 순서대로 배포돼요</span>
         </div>
 
-        <div class="panel" id="panel-repo">
-          <div class="field">
-            <label>GitHub 저장소 URL</label>
-            <input id="repo" placeholder="https://github.com/user/repo">
-            <p class="field-hint">
-              Dockerfile이 없어도 자동으로 감지해서 빌드해요. 단, 저장소 루트에
-              <code>requirements.txt</code>(Python) 또는 <code>package.json</code>(Node.js) 또는
-              <code>index.html</code>(정적 사이트) 중 하나는 반드시 있어야 해요.
-              포트는 Dockerfile의 <code>EXPOSE</code>를 읽어 자동으로 정해요.
-            </p>
-          </div>
-        </div>
+        <div id="compList"></div>
 
-        <details class="advanced">
-          <summary>고급 설정 &mdash; 여러 컴포넌트로 이뤄진 앱 배포</summary>
-          <div class="advanced-body">
-            <div class="field">
-              <label>프로젝트 <span style="font-weight:400;">(선택)</span></label>
-              <input id="project" placeholder="my-project">
-              <p class="field-hint">
-                같은 프로젝트로 여러 번 배포하면 한 네임스페이스에 모여서,
-                컴포넌트끼리 서비스 이름으로 서로를 호출할 수 있어요.
-              </p>
-            </div>
-
-            <div class="field">
-              <label>서비스 이름 <span style="font-weight:400;">(선택)</span></label>
-              <input id="serviceName" placeholder="api-svc">
-              <p class="field-hint">
-                다른 컴포넌트가 이 컴포넌트를 부를 때 쓰는 이름이에요. 비우면 위의 이름을 그대로 써요.
-              </p>
-            </div>
-
-            <div class="field">
-              <label>환경변수 <span style="font-weight:400;">(선택)</span></label>
-              <input id="env" placeholder="KEY=VALUE,KEY2=VALUE2">
-              <p class="field-hint">
-                <code>KEY=VALUE</code>를 쉼표로 구분해서 적어요. 값에 쉼표는 쓸 수 없어요.
-              </p>
-            </div>
-
-            <div class="check-row">
-              <input type="checkbox" id="expose" checked>
-              <label for="expose">외부에 공개 (끄면 클러스터 안에서만 접근 가능)</label>
-            </div>
-          </div>
-        </details>
+        <button class="btn-add" onclick="addComponent()">+ 컴포넌트 추가</button>
 
         <div class="actions">
-          <button class="btn-primary" id="deployBtn" onclick="deployApp()">Deploy</button>
+          <button class="btn-primary" id="deployBtn" onclick="deployAll()">전체 배포</button>
           <button class="btn-secondary" onclick="checkStatus()">상태 확인</button>
-          <button class="btn-secondary" onclick="deleteApp()">삭제</button>
+          <button class="btn-secondary" onclick="deleteApp()">프로젝트 삭제</button>
         </div>
       </div>
     </div>
@@ -714,55 +747,34 @@
 
   <script>
     const API_BASE = "/api";
-    let mode = "image";
+    const BASE_DOMAIN = "158.247.251.109.sslip.io:26117";
 
-    document.querySelectorAll(".tab").forEach(tab => {
-      tab.addEventListener("click", () => {
-        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-        document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-        tab.classList.add("active");
-        mode = tab.dataset.tab;
-        document.getElementById(`panel-${mode}`).classList.add("active");
-        sessionStorage.setItem("nimbus_mode", mode);
-      });
-    });
+    /**
+     * 화면 상태는 "프로젝트 하나 + 컴포넌트 여러 개"다.
+     * 백엔드도 프로젝트 단위(네임스페이스 하나)로 배포하므로 같은 모양을 유지한다.
+     */
+    let components = [];
+    let compSeq = 0;
 
-    // 새로고침하면 유지되지만, 탭/창을 닫으면 초기화되도록 sessionStorage에 저장/복원
-    const PERSIST_FIELDS = ["name", "image", "repo", "port", "project", "serviceName", "env"];
-
-    PERSIST_FIELDS.forEach(id => {
-      const el = document.getElementById(id);
-      el.addEventListener("input", () => {
-        sessionStorage.setItem(`nimbus_${id}`, el.value);
-      });
-    });
-
-    function restoreFormState() {
-      PERSIST_FIELDS.forEach(id => {
-        const saved = sessionStorage.getItem(`nimbus_${id}`);
-        if (saved) document.getElementById(id).value = saved;
-      });
-      const savedMode = sessionStorage.getItem("nimbus_mode");
-      if (savedMode === "repo") {
-        document.querySelector('.tab[data-tab="repo"]').click();
-      }
-      // 고급 설정에 값이 남아 있으면 접혀 있어도 보이도록 펼쳐둔다
-      const advancedUsed = ["project", "serviceName", "env"]
-        .some(id => document.getElementById(id).value.trim());
-      if (advancedUsed) document.querySelector(".advanced").open = true;
+    function blankComponent() {
+      return {
+        id: `c${++compSeq}`,
+        name: "",
+        source: "image",
+        image: "",
+        repo: "",
+        port: "",
+        serviceName: "",
+        env: "",
+        expose: components.length === 0,   // 첫 컴포넌트만 기본 공개
+        open: true,
+        status: "",
+        statusLabel: "",
+      };
     }
-
-    restoreFormState();
-
-    // ---------- 폼 값 읽기 ----------
 
     function val(id) {
       return document.getElementById(id).value.trim();
-    }
-
-    /** 프로젝트를 비워두면 컴포넌트 이름이 곧 프로젝트 이름이 된다. */
-    function currentProject() {
-      return val("project") || val("name");
     }
 
     /** 값이 있는 항목만 쿼리스트링으로 만든다. */
@@ -772,6 +784,211 @@
         .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
         .join("&");
     }
+
+    function esc(s) {
+      return String(s ?? "").replace(/[&<>"']/g, ch =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+    }
+
+    // ---------- 상태 저장/복원 ----------
+    // 새로고침하면 유지되지만, 탭/창을 닫으면 초기화되도록 sessionStorage에 저장
+
+    function saveState() {
+      sessionStorage.setItem("nimbus_project", val("project"));
+      sessionStorage.setItem("nimbus_components", JSON.stringify(components));
+    }
+
+    function restoreState() {
+      document.getElementById("project").value = sessionStorage.getItem("nimbus_project") || "";
+      try {
+        const saved = JSON.parse(sessionStorage.getItem("nimbus_components") || "[]");
+        if (Array.isArray(saved) && saved.length) {
+          components = saved;
+          compSeq = saved.length;
+          components.forEach((c, i) => { c.id = `c${i + 1}`; });
+        }
+      } catch { /* 저장된 값이 깨졌으면 무시하고 빈 상태로 시작 */ }
+      if (!components.length) components.push(blankComponent());
+    }
+
+    // ---------- 렌더링 ----------
+
+    function updateProjectUrl() {
+      const project = val("project");
+      document.getElementById("projectUrl").textContent =
+        project ? `http://${project}.${BASE_DOMAIN}` : "—";
+    }
+
+    document.getElementById("project").addEventListener("input", () => {
+      updateProjectUrl();
+      saveState();
+    });
+
+    function sourceLabel(c) {
+      return c.source === "repo" ? "저장소" : "이미지";
+    }
+
+    function renderComponent(c) {
+      return `
+        <div class="comp ${c.open ? "open" : ""}" id="comp-${c.id}">
+          <div class="comp-head" onclick="toggleComponent('${c.id}')">
+            <span class="comp-caret">${c.open ? "▾" : "▸"}</span>
+            <span class="comp-title ${c.name ? "" : "unnamed"}" id="title-${c.id}">${esc(c.name) || "이름 없음"}</span>
+            <span class="badge" id="source-${c.id}">${sourceLabel(c)}</span>
+            <span class="badge ${c.expose ? "public" : ""}" id="expose-${c.id}">${c.expose ? "공개" : "내부"}</span>
+            <span class="badge ${c.status}" id="status-${c.id}" style="${c.status ? "" : "display:none"}">${esc(c.statusLabel)}</span>
+            <button class="btn-icon" title="삭제"
+                    onclick="event.stopPropagation(); removeComponent('${c.id}')">&times;</button>
+          </div>
+          <div class="comp-body">
+            <div class="seg">
+              <div class="seg-opt ${c.source === "image" ? "active" : ""}" onclick="setSource('${c.id}','image')">Docker 이미지</div>
+              <div class="seg-opt ${c.source === "repo" ? "active" : ""}" onclick="setSource('${c.id}','repo')">GitHub 저장소</div>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>이름</label>
+                <input value="${esc(c.name)}" placeholder="frontend"
+                       oninput="setName('${c.id}', this.value)">
+              </div>
+              <div class="field">
+                <label>서비스 이름 <span style="font-weight:400;">(선택)</span></label>
+                <input value="${esc(c.serviceName)}" placeholder="비우면 위 이름"
+                       oninput="setField('${c.id}','serviceName', this.value)">
+              </div>
+            </div>
+
+            <div id="src-image-${c.id}" style="${c.source === "image" ? "" : "display:none"}">
+              <div class="row">
+                <div class="field" style="flex:2;">
+                  <label>Docker 이미지</label>
+                  <input value="${esc(c.image)}" placeholder="nginx:latest"
+                         oninput="setField('${c.id}','image', this.value)">
+                </div>
+                <div class="field">
+                  <label>포트 <span style="font-weight:400;">(선택)</span></label>
+                  <input value="${esc(c.port)}" placeholder="80"
+                         oninput="setField('${c.id}','port', this.value)">
+                </div>
+              </div>
+              <p class="field-hint" style="margin-top:-8px;">
+                비우면 <code>80</code>을 사용해요. 예를 들어 <code>postgres:16</code>은 <code>5432</code>.
+              </p>
+            </div>
+
+            <div id="src-repo-${c.id}" style="${c.source === "repo" ? "" : "display:none"}">
+              <div class="field">
+                <label>GitHub 저장소 URL</label>
+                <input value="${esc(c.repo)}" placeholder="https://github.com/user/repo"
+                       oninput="setField('${c.id}','repo', this.value)">
+                <p class="field-hint">
+                  Dockerfile이 없어도 자동으로 감지해서 빌드해요. 단, 저장소 루트에
+                  <code>requirements.txt</code>(Python) 또는 <code>package.json</code>(Node.js) 또는
+                  <code>index.html</code>(정적 사이트) 중 하나는 반드시 있어야 해요.
+                  포트는 Dockerfile의 <code>EXPOSE</code>를 읽어 자동으로 정해요.
+                </p>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>환경변수 <span style="font-weight:400;">(선택)</span></label>
+              <input value="${esc(c.env)}" placeholder="KEY=VALUE,KEY2=VALUE2"
+                     oninput="setField('${c.id}','env', this.value)">
+              <p class="field-hint">
+                같은 프로젝트의 다른 컴포넌트는 <b>서비스 이름</b>으로 부를 수 있어요.
+                예를 들어 <code>DB_HOST=db</code>.
+              </p>
+            </div>
+
+            <div class="check-row">
+              <input type="checkbox" id="chk-${c.id}" ${c.expose ? "checked" : ""}
+                     onchange="setExpose('${c.id}', this.checked)">
+              <label for="chk-${c.id}">외부에 공개 &mdash; 프로젝트 주소로 이 컴포넌트를 연결해요</label>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function render() {
+      document.getElementById("compList").innerHTML = components.map(renderComponent).join("");
+    }
+
+    function find(id) {
+      return components.find(c => c.id === id);
+    }
+
+    // 입력 중 전체를 다시 그리면 포커스가 날아가므로, 바뀐 부분만 직접 갱신한다.
+
+    function setField(id, key, value) {
+      find(id)[key] = value;
+      saveState();
+    }
+
+    function setName(id, value) {
+      const c = find(id);
+      c.name = value;
+      const title = document.getElementById(`title-${id}`);
+      title.textContent = value || "이름 없음";
+      title.classList.toggle("unnamed", !value);
+      saveState();
+    }
+
+    function setExpose(id, checked) {
+      const c = find(id);
+      c.expose = checked;
+      const badge = document.getElementById(`expose-${id}`);
+      badge.textContent = checked ? "공개" : "내부";
+      badge.classList.toggle("public", checked);
+      saveState();
+    }
+
+    function setSource(id, source) {
+      const c = find(id);
+      c.source = source;
+      document.getElementById(`src-image-${id}`).style.display = source === "image" ? "" : "none";
+      document.getElementById(`src-repo-${id}`).style.display = source === "repo" ? "" : "none";
+      document.getElementById(`source-${id}`).textContent = sourceLabel(c);
+      document.querySelectorAll(`#comp-${id} .seg-opt`).forEach((opt, i) => {
+        opt.classList.toggle("active", (i === 0) === (source === "image"));
+      });
+      saveState();
+    }
+
+    function toggleComponent(id) {
+      const c = find(id);
+      c.open = !c.open;
+      document.getElementById(`comp-${id}`).classList.toggle("open", c.open);
+      document.querySelector(`#comp-${id} .comp-caret`).textContent = c.open ? "▾" : "▸";
+      saveState();
+    }
+
+    function addComponent() {
+      components.push(blankComponent());
+      render();
+      saveState();
+    }
+
+    function removeComponent(id) {
+      components = components.filter(c => c.id !== id);
+      if (!components.length) components.push(blankComponent());
+      render();
+      saveState();
+    }
+
+    function setCompStatus(c, status, label) {
+      c.status = status;
+      c.statusLabel = label || "";
+      const el = document.getElementById(`status-${c.id}`);
+      if (!el) return;
+      el.className = `badge ${status}`;
+      el.textContent = c.statusLabel;
+      el.style.display = status ? "" : "none";
+    }
+
+    restoreState();
+    render();
+    updateProjectUrl();
 
     // ---------- 로그인/회원가입 ----------
 
@@ -878,13 +1095,14 @@
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async function pollBuildStatus(name, project) {
-      sessionStorage.setItem("nimbus_pendingBuild", JSON.stringify({ name, project }));
+    /** 빌드가 끝날 때까지 폴링하고, 최종 결과를 돌려준다. */
+    async function pollBuildStatus(c, project) {
+      sessionStorage.setItem("nimbus_pendingBuild", JSON.stringify({ name: c.name, project }));
       let seconds = 0;
       while (true) {
-        setStatus("pending", `이미지 빌드 중... (${seconds}초 경과)`);
+        setCompStatus(c, "pending", `빌드 ${seconds}초`);
         const query = buildQuery({ project });
-        const res = await fetch(`${API_BASE}/deploy-from-repo/${encodeURIComponent(name)}/status?${query}`);
+        const res = await fetch(`${API_BASE}/deploy-from-repo/${encodeURIComponent(c.name)}/status?${query}`);
         const data = await res.json();
 
         if (data.status === "building") {
@@ -894,11 +1112,7 @@
         }
 
         sessionStorage.removeItem("nimbus_pendingBuild");
-        const ok = data.status === "created";
-        setStatus(ok ? "ok" : "err", ok ? "배포 완료" : "배포 실패");
-        showResult(data);
-        loadHistory();
-        return;
+        return data;
       }
     }
 
@@ -911,65 +1125,113 @@
       try {
         pending = JSON.parse(raw);
       } catch {
-        pending = { name: raw, project: raw };   // 이전 형식(문자열)과의 호환
+        return sessionStorage.removeItem("nimbus_pendingBuild");
       }
 
-      document.getElementById("name").value = pending.name;
-      withLoading(() => pollBuildStatus(pending.name, pending.project || pending.name));
-    }
-
-    async function deployApp() {
-      const name = val("name");
-      const project = currentProject();
-      const serviceName = val("serviceName");
-      const env = val("env");
-      const expose = document.getElementById("expose").checked;
+      const c = components.find(x => x.name === pending.name);
+      if (!c) return sessionStorage.removeItem("nimbus_pendingBuild");
 
       withLoading(async () => {
-        if (mode === "image") {
-          const query = buildQuery({
-            name,
-            image: val("image"),
-            port: val("port"),
-            project,
-            service_name: serviceName,
-            expose,
-            env,
-          });
-          const res = await fetch(`${API_BASE}/deployments?${query}`, {
-            method: "POST",
-            headers: authHeaders()
-          });
-          const data = await res.json();
-          setStatus(res.ok ? "ok" : "err", res.ok ? "배포 완료" : "배포 실패 (API 키 확인)");
-          showResult(data);
-          loadHistory();
-        } else {
-          const query = buildQuery({
-            name,
-            repo_url: val("repo"),
-            project,
-            service_name: serviceName,
-            expose,
-            env,
-          });
-          const res = await fetch(`${API_BASE}/deploy-from-repo?${query}`, {
-            method: "POST",
-            headers: authHeaders()
-          });
-          const data = await res.json();
-          if (!res.ok || data.status !== "building") {
-            setStatus("err", res.status === 401 ? "인증 실패 (API 키 확인)" : "요청 실패");
-            showResult(data);
+        const data = await pollBuildStatus(c, pending.project);
+        const ok = data.status === "created";
+        setCompStatus(c, ok ? "ok" : "err", ok ? "완료" : "실패");
+        setStatus(ok ? "ok" : "err", ok ? "배포 완료" : "배포 실패");
+        showResult(data);
+        loadHistory();
+      });
+    }
+
+    /** 컴포넌트 하나를 배포한다. 저장소 소스는 빌드가 끝날 때까지 기다린다. */
+    async function deployComponent(project, c) {
+      const common = {
+        name: c.name,
+        project,
+        service_name: c.serviceName,
+        expose: c.expose,
+        env: c.env,
+      };
+
+      if (c.source === "image") {
+        const query = buildQuery({ ...common, image: c.image, port: c.port });
+        const res = await fetch(`${API_BASE}/deployments?${query}`, {
+          method: "POST",
+          headers: authHeaders()
+        });
+        return await res.json();
+      }
+
+      const query = buildQuery({ ...common, repo_url: c.repo });
+      const res = await fetch(`${API_BASE}/deploy-from-repo?${query}`, {
+        method: "POST",
+        headers: authHeaders()
+      });
+      const data = await res.json();
+      if (data.status !== "building") return data;
+      return await pollBuildStatus(c, project);
+    }
+
+    /** 배포 전에 빠진 값이 없는지 확인한다. 문제가 있으면 메시지를 돌려준다. */
+    function validate(project) {
+      if (!project) return "프로젝트 이름을 입력해 주세요.";
+      const named = components.filter(c => c.name);
+      if (!named.length) return "컴포넌트 이름을 하나 이상 입력해 주세요.";
+
+      for (const c of named) {
+        if (c.source === "image" && !c.image) return `${c.name}: Docker 이미지를 입력해 주세요.`;
+        if (c.source === "repo" && !c.repo) return `${c.name}: 저장소 URL을 입력해 주세요.`;
+      }
+
+      const exposed = named.filter(c => c.expose);
+      if (exposed.length > 1) {
+        return `외부에 공개할 컴포넌트는 하나만 고를 수 있어요. 지금은 ${exposed.map(c => c.name).join(", ")} 입니다.`;
+      }
+      return null;
+    }
+
+    async function deployAll() {
+      const project = val("project");
+      const error = validate(project);
+      if (error) {
+        alert(error);
+        return;
+      }
+
+      const targets = components.filter(c => c.name);
+      targets.forEach(c => setCompStatus(c, "", ""));
+
+      const results = {};
+      withLoading(async () => {
+        for (let i = 0; i < targets.length; i++) {
+          const c = targets[i];
+          setStatus("pending", `배포 중... (${i + 1}/${targets.length}) ${c.name}`);
+          setCompStatus(c, "pending", "배포 중");
+
+          const data = await deployComponent(project, c);
+          results[c.name] = data;
+
+          const ok = data.status === "created";
+          setCompStatus(c, ok ? "ok" : "err", ok ? "완료" : "실패");
+          if (!ok) {
+            // 앞의 컴포넌트가 실패하면 뒤의 컴포넌트는 어차피 의존을 못 찾으므로 멈춘다
+            setStatus("err", `${c.name} 배포 실패`);
+            showResult(results);
+            loadHistory();
             return;
           }
-          await pollBuildStatus(name, project);
         }
+
+        setStatus("ok", `배포 완료 (${targets.length}개)`);
+        showResult({ project, url: `http://${project}.${BASE_DOMAIN}`, components: results });
+        loadHistory();
       });
     }
 
     async function checkStatus() {
-      const project = currentProject();
+      const project = val("project");
+      if (!project) {
+        alert("프로젝트 이름을 입력해 주세요.");
+        return;
+      }
       withLoading(async () => {
         const res = await fetch(`${API_BASE}/projects/${encodeURIComponent(project)}`);
         const data = await res.json();
@@ -979,7 +1241,11 @@
     }
 
     async function deleteApp() {
-      const project = currentProject();
+      const project = val("project");
+      if (!project) {
+        alert("프로젝트 이름을 입력해 주세요.");
+        return;
+      }
       if (!confirm(`프로젝트 "${project}" 를 통째로 삭제할까요? 안에 있는 모든 컴포넌트가 함께 사라져요.`)) {
         return;
       }
@@ -990,6 +1256,7 @@
         });
         const data = await res.json();
         setStatus(res.ok ? "ok" : "err", res.ok ? "삭제됨" : "삭제 실패 (API 키 확인)");
+        components.forEach(c => setCompStatus(c, "", ""));
         showResult(data);
         loadHistory();
       });
